@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Agent Evaluation 与 Reward Modeling 项目仪表盘" />
+    <title>Agent Evaluation Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="kicker">PROJECT 02 · ALIGNMENT LAB</p>
+          <h1>Agent Evaluation<br /><span>& Reward Modeling</span></h1>
+        </div>
+        <p class="intro">从 Q-Learning 轨迹出发，用多目标 Reward、Bradley–Terry 偏好概率和 Active Querying 找出最值得人工标注的样本。</p>
+      </header>
+
+      <section id="status" class="status">正在读取实验结果…</section>
+
+      <section class="metrics">
+        <article><span>训练回合</span><b id="episodeCount">—</b><small>episodes / profile</small></article>
+        <article><span>最佳轨迹分数</span><b id="bestScore">—</b><small id="bestTrajectory">trajectory</small></article>
+        <article><span>最不确定偏好</span><b id="uncertainProbability">—</b><small>越接近 0.5 越值得标注</small></article>
+        <article><span>候选轨迹</span><b id="trajectoryCount">—</b><small>ranked trajectories</small></article>
+      </section>
+
+      <section class="workspace">
+        <article class="panel profile-panel">
+          <div class="panel-title">
+            <div><p>OBJECTIVE WEIGHTS</p><h2>多目标权衡</h2></div>
+            <select id="profileSelect" aria-label="权重实验">
+              <option value="benefit-focused">收益优先</option>
+              <option value="balanced" selected>均衡策略</option>
+              <option value="risk-averse">风险规避</option>
+            </select>
+          </div>
+          <div class="weights" id="weights"></div>
+          <div class="profile-score">
+            <span>最后 30 回合平均 weighted reward</span>
+            <strong id="profileAverage">—</strong>
+          </div>
+          <p id="profileExplanation" class="muted"></p>
+        </article>
+
+        <article class="panel query-panel">
+          <div class="panel-title"><div><p>ACTIVE QUERYING</p><h2>下一组人工标注</h2></div><span class="tag">Maximum Disagreement</span></div>
+          <div class="versus">
+            <div><small>Trajectory A</small><b id="pairA">—</b><span id="scoreA">—</span></div>
+            <em>VS</em>
+            <div><small>Trajectory B</small><b id="pairB">—</b><span id="scoreB">—</span></div>
+          </div>
+          <p class="muted">两条轨迹的偏好概率最接近 0.5，Reward Model 最难判断谁更好，因此人工反馈的信息价值最高。</p>
+        </article>
+      </section>
+
+      <section class="charts">
+        <article class="panel"><div class="panel-title"><div><p>TRAINING</p><h2>Q-Learning 奖励曲线</h2></div></div><img src="../results/reward_curve.png" alt="Q-Learning reward curve" /></article>
+        <article class="panel"><div class="panel-title"><div><p>TRADE-OFF</p><h2>权重实验对比</h2></div></div><img src="../results/weight_experiment_rewards.png" alt="Multi-objective weight experiments" /></article>
+      </section>
+
+      <section class="panel ranking">
+        <div class="panel-title"><div><p>EVALUATION</p><h2>Trajectory Score 排名</h2></div><span class="tag">RewardModel</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Rank</th><th>Trajectory</th><th>Score</th><th>Benefit</th><th>Cost</th><th>Risk</th><th>Steps</th></tr></thead>
+            <tbody id="trajectoryRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="flow">
+        <div><b>01</b><span>GridWorld</span></div><i>→</i>
+        <div><b>02</b><span>Q-Learning</span></div><i>→</i>
+        <div><b>03</b><span>RewardModel</span></div><i>→</i>
+        <div><b>04</b><span>Bradley–Terry</span></div><i>→</i>
+        <div><b>05</b><span>Human Label</span></div>
+      </section>
+    </main>
+    <script src="app.js" defer></script>
+  </body>
+</html>
